@@ -13,3 +13,5 @@ Used CRUD operations ( Create, Read, Update, Delete )  for giving responses to u
 Database:
 
 For storing and updating data in realtime, this app uses firebase firestore which is handled in Server side of Nextjs.
+
+You can try this app at here: https://notes-app-five-livid.vercel.app
