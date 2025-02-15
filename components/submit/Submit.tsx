@@ -115,7 +115,7 @@ const Submit = () => {
 
         {/* // Selects buttons for screen width below 640px */}
         <div className='sm:hidden'>
-          <Selects state={state} setState={setState} />
+          <Selects state={state} showMessage={showMessage} setState={setState} />
         </div>
 
         <div className="mb-4">

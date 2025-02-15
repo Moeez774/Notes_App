@@ -17,11 +17,12 @@ interface Details {
         content: string,
         emoji: string,
     },
-    setState: Dispatch<SetStateAction<Details['state']>>
+    setState: Dispatch<SetStateAction<Details['state']>>,
+    showMessage: boolean,
 }
 
 
-const Selects: React.FC<Details> = ({ state, setState }) => {
+const Selects: React.FC<Details> = ({ state, setState, showMessage }) => {
 
     const all = [{ categ: 'Important', emoji: '🔥' }, { categ: 'Normal', emoji: '📝' }, { categ: 'Personal', emoji: '🔒' }, { categ: 'Work', emoji: '📚' }, { categ: 'Idea', emoji: '💡' }]
 
@@ -29,7 +30,7 @@ const Selects: React.FC<Details> = ({ state, setState }) => {
 
     return (
         <div>
-            <Select>
+            <Select value={showMessage? '': state.category}>
                 <SelectTrigger className="w-[180px] my-6">
                     <SelectValue placeholder="Category ✍️" className='block text-gray-700 text-sm font-bold mb-2' />
                 </SelectTrigger>
