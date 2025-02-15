@@ -26,6 +26,7 @@ const Note: React.FC<Note> = ({ note, id, coll }) => {
     const [loader, setLoader] = useState(false)
     const [showMessage, setShowMessage] = useState(false)
     const [message, setMessage] = useState('')
+    const [warning, setWarning] = useState(false)
 
     // for deleting note
 
@@ -46,6 +47,7 @@ const Note: React.FC<Note> = ({ note, id, coll }) => {
         setTimeout(() => {
             setLoader(false)
             setShowMessage(false)
+            document.body.style.overflowY = 'auto'
             router.push('/')
         }, 2000)
     }
@@ -54,7 +56,6 @@ const Note: React.FC<Note> = ({ note, id, coll }) => {
     const showPopUp = () => {
         setContent(note?.content || '')
         setStartEditing(true)
-        document.body.style.overflow = 'hidden'
         setTimeout(() => {
             setPopUp(true)
         }, 10)
@@ -65,20 +66,38 @@ const Note: React.FC<Note> = ({ note, id, coll }) => {
 
             {/* // adding loader */}
             {loader && (
-                <div className='fixed z-[100] top-0 left-0 items-center h-screen w-screen bg-[#0000007c] flex justify-center'>
+                <div className='fixed z-[220] top-0 left-0 items-center h-screen w-screen bg-[#0000007c] flex justify-center'>
                     {!showMessage && loader && <div className="loader-ellipsis"><div></div><div></div><div></div></div>}
                     {loader && showMessage && <div className='bg-white mx-3 text-center text-sm sm:text-base py-4 px-6 rounded-lg shadow-2xl'>
                         {message}
                     </div>}
                 </div>)}
 
+
+                {/* // for showing warning before deletion */}
+            <div className='fixed top-0 left-0 items-center h-screen w-screen flex justify-center' style={{ zIndex: warning ? '210' : '-200' }}>
+                <div className='bg-white shadow-2xl shadow-black flex flex-col justify-between gap-6 mx-3 text-center text-sm sm:text-base py-4 px-6 rounded-lg' style={{ transition: 'all 0.2s ease-in-out', transform: warning ? 'scale(1)' : 'scale(0.8)', opacity: warning ? '1' : '0' }}>
+                    <div>
+                        <h1>Are you sure you want to delete this note?</h1>
+                    </div>
+
+                    <div className='flex justify-end gap-3'>
+                        <button className='px-4 py-1.5 rounded-xl bg-[#1a1919] active:bg-black hover:bg-[#222121] transition-all duration-300 text-white' onClick={deleteNote}>Yes</button>
+                        <button className='px-4 py-1.5 rounded-xl bg-[#1a1919] duration-300 hover:bg-[#222121] active:bg-black text-white' onClick={() => {
+                                setWarning(false)
+                                document.body.style.overflowY = 'auto'
+                            }}>No</button>
+                    </div>
+                </div>
+            </div>
+
             {!note && (
                 <div className='fixed z-[100] top-0 left-0 items-center h-screen w-screen flex justify-center'>
-                <div className="lds-ellipsis"><div></div><div></div><div></div></div>
+                    <div className="lds-ellipsis"><div></div><div></div><div></div></div>
                 </div>)}
 
             {startEditing && <div className='fixed flex justify-center z-[60] items-center w-screen h-full top-0 left-0' style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-                <div style={{ transition: 'all 0.3s ease-in-out', transform: popUp ? 'scale(1)' : 'scale(0.8)', opacity: popUp ? '1' : '0' }}>
+                <div style={{ transition: 'all 0.2s ease-in-out', transform: popUp ? 'scale(1)' : 'scale(0.8)', opacity: popUp ? '1' : '0' }}>
                     <EditNote coll={coll} id={id} noteId={note?.noteId} setStartEditing={setStartEditing} setPopUp={setPopUp} content={content} setContent={setContent} />
                 </div>
             </div>}
@@ -97,7 +116,10 @@ const Note: React.FC<Note> = ({ note, id, coll }) => {
                 {/* // for deletion */}
 
                 <div>
-                    <Trash2 size={15} className='save cursor-pointer svg text-[gray]' onMouseEnter={() => setHovered(true)} onClick={deleteNote} onMouseLeave={() => setHovered(false)} />
+                    <Trash2 size={15} className='save cursor-pointer svg text-[gray]' onMouseEnter={() => setHovered(true)} onClick={() => {
+                                setWarning(true)
+                                document.body.style.overflowY = 'hidden'
+                            }} onMouseLeave={() => setHovered(false)} />
                     <div className='absolute my-2 py-2 px-4 cursor-default shadow-xl text-white rounded-lg bg-[#555555]' style={{ opacity: isHovered ? '1' : '0', transition: 'all 0.2s ease-in-out', transform: isHovered ? 'scale(1)' : 'scale(0.9)' }}>
                         <h1 className='text-xs'>Delete</h1>
                     </div>

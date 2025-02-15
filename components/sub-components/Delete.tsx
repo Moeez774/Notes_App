@@ -20,6 +20,7 @@ const Delete: React.FC<Details> = ({ data, phrase, uid }) => {
     const [loader, setLoader] = useState(false)
     const [showMessage, setShowMessage] = useState(false)
     const [message, setMessage] = useState('')
+    const [warning, setWarning] = useState(false)
 
     // sending request to server for deletion of note
 
@@ -36,11 +37,12 @@ const Delete: React.FC<Details> = ({ data, phrase, uid }) => {
         let response = await a.json()
         setMessage(response.message)
         setShowMessage(true)
-    
+
         setTimeout(() => {
-          setLoader(false)
-          setShowMessage(false)
-        }, 2000)    
+            setLoader(false)
+            setShowMessage(false)
+            document.body.style.overflowY = 'auto'
+        }, 2000)
     }
 
     // for navigating to read page for read more
@@ -51,12 +53,31 @@ const Delete: React.FC<Details> = ({ data, phrase, uid }) => {
         <>
             {/* // adding loader */}
             {loader && (
-                <div className='fixed z-[200] top-0 left-0 items-center h-screen w-screen bg-[#0000007c] flex justify-center'>
+                <div className='fixed z-[220] top-0 left-0 items-center h-screen w-screen bg-[#0000007c] flex justify-center'>
                     {!showMessage && loader && <div className="loader-ellipsis"><div></div><div></div><div></div></div>}
                     {loader && showMessage && <div className='bg-white mx-3 text-center text-sm sm:text-base py-4 px-6 rounded-lg shadow-2xl'>
                         {message}
                     </div>}
                 </div>)}
+
+                {/* // for showing warning on deletion */}
+
+            
+               <div className='fixed top-0 left-0 items-center h-screen w-screen flex justify-center' style={{ zIndex: warning? '210': '-200' }}>
+                    <div className='bg-white shadow-2xl shadow-black flex flex-col justify-between gap-6 mx-3 text-center text-sm sm:text-base py-4 px-6 rounded-lg' style={{ transition: 'all 0.2s ease-in-out', transform: warning? 'scale(1)': 'scale(0.8)', opacity: warning? '1': '0' }}>
+                        <div>
+                            <h1>Are you sure you want to delete this note?</h1>
+                        </div>
+
+                        <div className='flex justify-end gap-3'>
+                            <button className='px-4 py-1.5 rounded-xl bg-[#1a1919] active:bg-black hover:bg-[#222121] transition-all duration-300 text-white' onClick={deleteNote}>Yes</button>
+                            <button className='px-4 py-1.5 rounded-xl bg-[#1a1919] duration-300 hover:bg-[#222121] active:bg-black text-white' onClick={() => {
+                                setWarning(false)
+                                document.body.style.overflowY = 'auto'
+                            }}>No</button>
+                        </div>
+                    </div>
+                </div>
 
             <div className='flex'>
                 <div className="card overflow-hidden active:scale-95" style={{ wordBreak: 'break-word' }} onMouseEnter={() => setCardHover(true)} onMouseLeave={() => setCardHover(false)}>
@@ -82,7 +103,10 @@ const Delete: React.FC<Details> = ({ data, phrase, uid }) => {
                                 {data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "2-digit" }) : "Time Loading..."}
                             </p>
                             <div className="p-3">
-                                <Trash2 size={15} className='save cursor-pointer svg text-[gray]' onMouseEnter={() => setHovered(true)} onClick={deleteNote} onMouseLeave={() => setHovered(false)} />
+                                <Trash2 size={15} className='save cursor-pointer svg text-[gray]' onMouseEnter={() => setHovered(true)} onClick={() => {
+                                setWarning(true)
+                                document.body.style.overflowY = 'hidden'
+                            }} onMouseLeave={() => setHovered(false)} />
                                 <div className='absolute my-2 py-2 px-4 cursor-default shadow-xl text-white rounded-lg bg-[#0c0c0c77]' style={{ opacity: isHovered ? '1' : '0', transition: 'all 0.2s ease-in-out', transform: isHovered ? 'scale(1)' : 'scale(0.9)' }}>
                                     <h1 className='text-xs'>Delete</h1>
                                 </div>
