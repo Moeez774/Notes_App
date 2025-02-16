@@ -40,6 +40,7 @@ const Delete: React.FC<Details> = ({ data, phrase, uid }) => {
 
         setTimeout(() => {
             setLoader(false)
+            setWarning(false)
             setShowMessage(false)
             document.body.style.overflowY = 'auto'
         }, 2000)
